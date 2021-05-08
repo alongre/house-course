@@ -2,11 +2,7 @@ import { FunctionComponent, ReactNode } from "react";
 import Link from "next/link";
 import { useAuth } from "src/auth/useAuth";
 
-interface IProps {
-  main: ReactNode;
-}
-
-const Layout: FunctionComponent<IProps> = ({ main }) => {
+const Layout: FunctionComponent = (props) => {
   const { user, authenticated, logout } = useAuth();
   return (
     <div className="bg-gray-900 max-w-screen-2xl mx-auto text-white">
@@ -31,7 +27,7 @@ const Layout: FunctionComponent<IProps> = ({ main }) => {
           )}
         </div>
       </nav>
-      <main style={{ minHeight: "calc(100vh - 64px)" }}>{main}</main>
+      <main style={{ minHeight: "calc(100vh - 64px)" }}>{props.children}</main>
     </div>
   );
 };
