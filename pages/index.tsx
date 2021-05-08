@@ -9,5 +9,5 @@ import Layout from "src/components/layout";
 // import { HousesQuery, HousesQueryVariables } from "src/generated/HousesQuery";
 
 export default function Home() {
-  return <Layout main={<div>Home</div>} />;
+  return <div>Home</div>;
 }
