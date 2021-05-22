@@ -1,18 +1,73 @@
-// import { useState, useEffect, ChangeEvent } from "react";
-// import { useForm } from "react-hook-form";
+import { useState, useEffect, ChangeEvent } from "react";
+import { useForm } from "react-hook-form";
 // import { useMutation, gql } from "@apollo/client";
 // import { useRouter } from "next/router";
-// import Link from "next/link";
+import Link from "next/link";
 // import { Image } from "cloudinary-react";
-// import { SearchBox } from "./searchBox";
+import { SearchBox } from "./searchBox";
 // import {
 //   CreateHouseMutation,
 //   CreateHouseMutationVariables,
 // } from "src/generated/CreateHouseMutation";
-// import {
+// impccjort {
 //   UpdateHouseMutation,
 //   UpdateHouseMutationVariables,
 // } from "src/generated/UpdateHouseMutation";
 // import { CreateSignatureMutation } from "src/generated/CreateSignatureMutation";
 
-export {};
+type FormData = {
+  address: string;
+  latitude: number;
+  longitude: number;
+  bedrooms: string;
+  image: FileList;
+};
+
+type Props = {};
+
+export default function HouseForm({}: Props) {
+  const [submitting, setSubmitting] = useState(false);
+  const { register, handleSubmit, setValue, errors, watch } = useForm<FormData>(
+    { defaultValues: {} }
+  );
+
+  const address = watch("address");
+
+  useEffect(() => {
+    register({ name: "address" }, { required: "Please enter your address" });
+    register({ name: "latitude" }, { required: true, min: -90, max: 90 });
+    register({ name: "longitude" }, { required: true, min: -180, max: 180 });
+  }, [register]);
+
+  const handleCreate = async (data: FormData) => {};
+
+  const onSubmit = (data: FormData) => {
+    setSubmitting(true);
+    handleCreate(data);
+  };
+
+  const onSelectAddress = (
+    address: string,
+    latitude: number | null,
+    longitude: number | null
+  ) => {
+    setValue("address", address);
+    setValue("latitude", latitude);
+    setValue("longitude", longitude);
+  };
+
+  return (
+    <form className="mx-auto max-w-xl py-4" onSubmit={handleSubmit(onSubmit)}>
+      <h1 className="text-xl">Add a New House</h1>
+
+      <div className="mt-4">
+        <label htmlFor="search" className="block">
+          Search for your address
+        </label>
+        <SearchBox onSelectAddress={onSelectAddress} defaultValue="" />
+        {errors.address && <p>{errors.address.message}</p>}
+        <h2>{address}</h2>
+      </div>
+    </form>
+  );
+}

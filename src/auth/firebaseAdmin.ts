@@ -23,8 +23,6 @@ const verifyIdToken = (token: string) => {
 export const loadIdToken = async (
   req: NextApiRequest
 ): Promise<string | null> => {
-  console.log("token", req.cookies.token);
-
   if (!req.cookies.token) return null;
   const decoded = await verifyIdToken(req.cookies.token);
   if (!decoded) return null;
