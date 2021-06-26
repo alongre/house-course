@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 // import { Image } from "cloudinary-react";
 import { SearchBox } from "./searchBox";
+import Image from "next/image";
 // import {
 //   CreateHouseMutation,
 //   CreateHouseMutationVariables,
@@ -27,6 +28,7 @@ type Props = {};
 
 export default function HouseForm({}: Props) {
   const [submitting, setSubmitting] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string>();
   const { register, handleSubmit, setValue, errors, watch } = useForm<FormData>(
     { defaultValues: {} }
   );
@@ -44,6 +46,7 @@ export default function HouseForm({}: Props) {
   const onSubmit = (data: FormData) => {
     setSubmitting(true);
     handleCreate(data);
+    console.log({ data });
   };
 
   const onSelectAddress = (
@@ -66,8 +69,81 @@ export default function HouseForm({}: Props) {
         </label>
         <SearchBox onSelectAddress={onSelectAddress} defaultValue="" />
         {errors.address && <p>{errors.address.message}</p>}
-        <h2>{address}</h2>
       </div>
+      {address && (
+        <>
+          <div className="mt-4">
+            <label
+              htmlFor="image"
+              className="p-4 border-dashed border-4 border-gray-600 block cursor-pointer"
+            >
+              Click to add image (16:9)
+            </label>
+            <input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              ref={register({
+                validate: (fileList: FileList) => {
+                  return fileList.length === 1
+                    ? true
+                    : "Please upload one file";
+                },
+              })}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                if (event?.target?.files?.[0]) {
+                  const file = event.target.files[0];
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setPreviewImage(reader.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+            />
+            {previewImage && (
+              <img
+                src={previewImage}
+                style={{ width: "576px", height: `${(9 / 16) * 576}` }}
+                className="mt-4 object-cover"
+              />
+            )}
+            {errors.image && <p>{errors.image.message}</p>}
+            <div className="mt-4">
+              <label htmlFor="bedrooms" className="block">
+                Beds
+              </label>
+              <input
+                id="bedrooms"
+                name="bedrooms"
+                type="number"
+                className="p-2"
+                ref={register({
+                  required: "Please enter the number of bedrooms",
+                  max: { value: 10, message: "Woooh, to big of a house" },
+                  min: { value: 1, message: "Most have at least 1 bedrooms" },
+                })}
+              />
+              {errors.bedrooms && <p>{errors.bedrooms.message}</p>}
+            </div>
+
+            <div className="mt-4">
+              <button
+                className="bg-blue-500 hover:bg:blue-700 font-bold py-2 px-4 rounded"
+                type="submit"
+                disabled={submitting}
+              >
+                Save
+              </button>
+              <div className="mx-2 inline-block">
+                <Link href="/">Cancel</Link>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </form>
   );
 }
