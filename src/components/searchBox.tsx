@@ -65,7 +65,6 @@ const ReadySearchBox = ({ onSelectAddress, defaultValue }: SearchBoxProps) => {
     }
   };
 
-  console.log({ status, data });
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
     if (e.target.value === "") {
